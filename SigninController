@@ -1,0 +1,56 @@
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
+
+namespace Login_practice.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SigninController : Controller
+    {
+        [Route("signin-google")]
+        public IActionResult GoogleSignIn()
+        {
+            var properties = new AuthenticationProperties
+            {
+                RedirectUri = Url.Action("GoogleCallback", "Signin")
+            };
+            return Challenge(properties, GoogleDefaults.AuthenticationScheme);
+        }
+
+        // Ensure this action uses the route /google-callback (or any other you prefer)
+        [Route("google-callback")]
+        public async Task<IActionResult> GoogleCallback()
+        {
+            var authenticateResult = await HttpContext.AuthenticateAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+            if (!authenticateResult.Succeeded)
+            {
+                return RedirectToAction("Error", "Home");
+            }
+
+            var claims = authenticateResult.Principal?.Identities.FirstOrDefault()?.Claims;
+            var name = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Name)?.Value;
+            var email = claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+
+            SaveToDatabase(name, email);
+            return RedirectToAction("Index", "Home");
+        }
+
+        private void SaveToDatabase(string name, string email)
+        {
+            // Your database context or data saving logic here
+            //using (var context = new YourDbContext())
+            //{
+            //    var user = new User
+            //    {
+            //        Name = name,
+            //        Email = email
+            //    };
+            //    context.Users.Add(user);
+            //    context.SaveChanges();
+            //}
+        }
+    }
+}
