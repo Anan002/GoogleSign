@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Form</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+
+        h1 {
+            color: #333;
+        }
+
+        .form-container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 300px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .google-signin {
+            background-color: #4285F4;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .google-signin img {
+            width: 20px;
+            margin-right: 8px;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 90%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: none;
+        }
+
+        textarea {
+            height: 100px;
+        }
+
+        .star-rating {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+        }
+
+        .star {
+            font-size: 24px;
+            color: #ccc;
+            cursor: pointer;
+        }
+
+        .star.selected {
+            color: #f39c12;
+        }
+
+        .emoji {
+            font-size: 40px;
+            margin-top: 15px;
+        }
+
+        button {
+            background-color: #5cb85c;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #4cae4c;
+        }
+
+        /* Comment Section Styling */
+        .comments-section {
+            background: #fff;
+            padding: 20px;
+            width: 80%;
+            margin-top: 40px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .comment {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comment .left {
+            flex: 3;
+            font-size: 16px;
+            color: #555;
+        }
+
+        .comment .right {
+            flex: 1;
+            font-size: 14px;
+            text-align: center;
+            color: #888;
+        }
+
+        .star-rating-small {
+            justify-content: center;
+        }
+
+        .star-rating-small .star {
+            font-size: 18px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Feedback Form</h1>
+    <div class="form-container">
+        <button class="google-signin">
+            <img src="Images/images.png" alt="Google Logo">
+            Sign in with Google
+        </button>
+
+        <p> or </p>
+        <form id="feedbackForm">
+            <input type="text" placeholder="Name" id="name" required>
+            <input type="email" placeholder="Email" id="email" required>
+            <textarea placeholder="Your comments..." id="comments" required></textarea>
+            <div class="star-rating">
+                <span class="star" data-value="1">&#9733;</span>
+                <span class="star" data-value="2">&#9733;</span>
+                <span class="star" data-value="3">&#9733;</span>
+                <span class="star" data-value="4">&#9733;</span>
+                <span class="star" data-value="5">&#9733;</span>
+            </div>
+            <div class="emoji" id="emojiReaction">😐</div>
+            <button type="submit">Submit Feedback</button>
+        </form>
+    </div>
+
+    <div class="comments-section" id="commentsSection">
+        <h3>Recent Comments</h3>
+    </div>
+
+    <script>
+        const stars = document.querySelectorAll('.star');
+        const emojiReaction = document.getElementById('emojiReaction');
+        const feedbackForm = document.getElementById('feedbackForm');
+        const commentsSection = document.getElementById('commentsSection');
+        let rating = 0;
+
+        const emojiMap = {
+            1: "😞",
+            2: "😕",
+            3: "😊",
+            4: "😄",
+            5: "😍"
+        };
+
+        function updateStars() {
+            stars.forEach(star => {
+                const starValue = parseInt(star.getAttribute('data-value'), 10);
+                if (starValue <= rating) {
+                    star.classList.add('selected');
+                } else {
+                    star.classList.remove('selected');
+                }
+            });
+            emojiReaction.textContent = emojiMap[rating];
+        }
+
+        stars.forEach(star => {
+            star.addEventListener('click', function () {
+                rating = parseInt(this.getAttribute('data-value'), 10);
+                updateStars();
+            });
+        });
+
+        updateStars();
+
+        feedbackForm.addEventListener('submit', function (event) {
+            event.preventDefault();
+            const name = document.getElementById('name').value;
+            const comments = document.getElementById('comments').value;
+
+            // Create the comment elements
+            const commentDiv = document.createElement('div');
+            commentDiv.classList.add('comment');
+
+            const leftDiv = document.createElement('div');
+            leftDiv.classList.add('left');
+            leftDiv.textContent = comments;
+
+            const rightDiv = document.createElement('div');
+            rightDiv.classList.add('right');
+
+            const starRatingDiv = document.createElement('div');
+            starRatingDiv.classList.add('star-rating-small');
+            for (let i = 1; i <= 5; i++) {
+                const star = document.createElement('span');
+                star.classList.add('star');
+                if (i <= rating) star.classList.add('selected');
+                star.innerHTML = '&#9733;';
+                starRatingDiv.appendChild(star);
+            }
+
+            rightDiv.appendChild(starRatingDiv);
+            rightDiv.innerHTML += `<br><strong>${name}</strong>`;
+
+            commentDiv.appendChild(leftDiv);
+            commentDiv.appendChild(rightDiv);
+
+            commentsSection.appendChild(commentDiv);
+
+            // Reset the form
+            feedbackForm.reset();
+            updateStars();
+        });
+    </script>
+</body>
+
+</html>
