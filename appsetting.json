@@ -1,0 +1,15 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+
+  "GoogleAuth": {
+    "ClientId": "",
+    "ClientSecret": "",
+    "CallbackPath": "/signin-google"
+  },
+  "AllowedHosts": "*"
+}
